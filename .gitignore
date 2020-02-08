@@ -1,3 +1,5 @@
-"E:\SCRIPTZ\Powershell\HTML"
-"E:\SCRIPTZ\Powershell\Get-Pass.7z"
-"E:\SCRIPTZ\Powershell\GetImmoWeb"
+.\CallPoliniex\*
+.\HTML\*
+.\log\*
+.\GetImmoWeb\*
+.\WksTools.ps1
