@@ -1,0 +1,1 @@
+﻿choco install notepadplusplus, 7zip, keepass, keepass-plugin-keeanywhere, adobereader, firefox, vlc, steam, discord, visualstudio2019community, vscode, git, razer-synapse-2, transmission, gpg4win, msiafterburner, microsoft-teams, bleachbit, greenshot, cmake, spotify -y

@@ -94,21 +94,15 @@ function FromUriToJson {
         {
             #Invoke webrequest
             $WebData = Invoke-WebRequest -Uri $uri
-
+            $json = ConvertTo-Json $WebData.content
             # Convert from HtmlWebResponseObject to WebResponseContentMemoryStream
-            $resp = $WebData.RawContentStream
-
-            # Create Streamreader from WebResponseContentMemoryStream
-            Wwrite "Deserializing object" -newline $true           
-            $sr = New-Object System.IO.StreamReader $resp
-            Add-Type -Path "C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.1\System.Web.Extensions.dll"
-            $serializer = New-Object System.Web.Script.Serialization.JavaScriptSerializer
-            $jsonObject = $serializer.DeserializeObject($sr.ReadToEnd())
+            $jsonobject = ConvertTo-Json -InputObject $WebData.Content -Compress
             return $jsonObject
         }
         catch 
         {
             $Error[0].Exception | Wwarn
+           
         }
 }
 
