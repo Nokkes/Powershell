@@ -1,5 +1,7 @@
-﻿[void] [System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms")
+﻿# Add Assemblies
+[void] [System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms")
 [void] [System.Reflection.Assembly]::LoadWithPartialName("System.Drawing")
+
 ### Add Forms ###
 $MainForm = New-Object System.Windows.Forms.Form
 $MainForm.Text = "PsSearch"
