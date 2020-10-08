@@ -13,32 +13,30 @@ $MainForm.StartPosition = "CenterScreen"
 $Icon = [System.Drawing.SystemIcons]::Question
 $MainForm.Icon = $Icon
 
-### Add Search boxes ####
-$strSearchBox = New-Object System.Windows.Forms.TextBox
-$strSearchBox.Size = New-Object System.Drawing.Size(50,25)
-$strSearchBox.Location = New-Object System.Drawing.Size(400,25)
-$strSearchBox.Text = ""
+### Add Text boxes ####
+$textboxSearch = New-Object System.Windows.Forms.TextBox
+$textboxSearch.Size = New-Object System.Drawing.Size(50,25)
+$textboxSearch.Location = New-Object System.Drawing.Size(400,25)
+$textboxSearch.Text = ""
 
-$pathSearchBox = New-Object System.Windows.Forms.TextBox
-$pathSearchBox.Size = New-Object System.Drawing.Size(300,25)
-$pathSearchBox.Location = New-Object System.Drawing.Size(10,25)
-$pathSearchBox.Text = ""
-$fdSearchBox = New-Object System.Windows.Forms.FolderBrowserDialog
-$pathSearchBox.add_click({$fdSearchBox.ShowDialog();$pathSearchBox.Text = $fdSearchBox.SelectedPath})
+$textboxPath = New-Object System.Windows.Forms.TextBox
+$textboxPath.Size = New-Object System.Drawing.Size(300,25)
+$textboxPath.Location = New-Object System.Drawing.Size(10,25)
+$textboxPath.Text = ""
+$fbdPath = New-Object System.Windows.Forms.FolderBrowserDialog
+$textboxPath.add_click({$fbdPath.ShowDialog();$textboxPath.Text = $fbdPath.SelectedPath})
 
-
-
-$extSearchBox = New-Object System.Windows.Forms.TextBox
-$extSearchBox.Size = New-Object System.Drawing.Size(75,25)
-$extSearchBox.Location = New-Object System.Drawing.Size(10,70)
-$extSearchBox.Text = "*"
-#$extSearchBox.add_click({[void] $extSearchBox.Clear()})
-$extSearchBox_FocusLost = {
-    if ($extSearchBox.Text -eq ""){
-        $extSearchBox.Text = "*"
+$textboxExtension = New-Object System.Windows.Forms.TextBox
+$textboxExtension.Size = New-Object System.Drawing.Size(75,25)
+$textboxExtension.Location = New-Object System.Drawing.Size(10,70)
+$textboxExtension.Text = "*"
+#$textboxExtension.add_click({[void] $textboxExtension.Clear()})
+$textboxExtension_FocusLost = {
+    if ($textboxExtension.Text -eq ""){
+        $textboxExtension.Text = "*"
     }
 }
-$extSearchBox.add_Leave($extSearchBox_FocusLost)
+$textboxExtension.add_Leave($textboxExtension_FocusLost)
 
 $datePicker = New-Object System.Windows.Forms.DateTimePicker
 $datePickerFormat = New-Object System.Windows.Forms.DateTimePickerFormat
@@ -49,42 +47,45 @@ $datePicker.Size = New-Object System.Drawing.Size(200,50)
 $datePicker.Location = New-Object System.Drawing.Size(170,70)
 
 ### Add Labels ###
-$pathText = New-Object System.Windows.Forms.Label
-$pathText.Size = New-Object System.Drawing.Size(75,25)
-$pathText.Location = New-Object System.Drawing.Size(10,10)
-$pathText.Text = "Path"
+$lblPath = New-Object System.Windows.Forms.Label
+$lblPath.Size = New-Object System.Drawing.Size(75,25)
+$lblPath.Location = New-Object System.Drawing.Size(10,10)
+$lblPath.Text = "Path"
 
-$strText = New-Object System.Windows.Forms.Label
-$strText.Size = New-Object System.Drawing.Size(150,25)
-$strText.Location = New-Object System.Drawing.Size(400,10)
-$strText.Text = "Search String"
+$lblSearch = New-Object System.Windows.Forms.Label
+$lblSearch.Size = New-Object System.Drawing.Size(150,25)
+$lblSearch.Location = New-Object System.Drawing.Size(400,10)
+$lblSearch.Text = "Search String"
 
-$extText = New-Object System.Windows.Forms.Label
-$extText.Size = New-Object System.Drawing.Size(150,25)
-$extText.Location = New-Object System.Drawing.Size(10,55)
-$extText.Text = "File Extension (e.g. .txt)"
+$lblExt = New-Object System.Windows.Forms.Label
+$lblExt.Size = New-Object System.Drawing.Size(150,25)
+$lblExt.Location = New-Object System.Drawing.Size(10,55)
+$lblExt.Text = "File Extension (e.g. .txt)"
 
-$dateText = New-Object System.Windows.Forms.Label
-$dateText.Size = New-Object System.Drawing.Size(75,25)
-$dateText.Location = New-Object System.Drawing.Size(170,55)
-$dateText.Text = "From Date"
-
+$lblDate = New-Object System.Windows.Forms.Label
+$lblDate.Size = New-Object System.Drawing.Size(75,25)
+$lblDate.Location = New-Object System.Drawing.Size(170,55)
+$lblDate.Text = "From Date"
 
 ### Add Dgv ###
 $dgv = New-Object System.Windows.Forms.DataGridView
 $dgv.Size = New-Object System.Drawing.Size(750,200)
 $dgv.Location = New-Object System.Drawing.Size(10,140)
 
+### Add ProgressBar ###
+$pb = New-Object System.Windows.Forms.ProgressBar
+$pb.Location = New-Object System.Drawing.Size(100,100)
+$pb.Size = New-Object System.Drawing.Size(350,25)
 
 ### Add Buttons ###
-$Search = New-Object System.Windows.Forms.Button
-$Search.Size = New-Object System.Drawing.Size(75,25)
-$Search.Location = New-Object System.Drawing.Size(10,100)
-$Search.Text = "Search"
+$btnSearch = New-Object System.Windows.Forms.Button
+$btnSearch.Size = New-Object System.Drawing.Size(75,25)
+$btnSearch.Location = New-Object System.Drawing.Size(10,100)
+$btnSearch.Text = "Search"
 
-$Search.add_click({ 
+$btnSearch.add_click({ 
     $dt = [datetime]::ParseExact($datePicker.Text, $datePicker.CustomFormat, $null)
-    $result = gci -Path $pathSearchBox.Text -Filter "*$($strSearchBox.Text)*" -Recurse -Force -ea SilentlyContinue  | ? {$_.LastWriteTime -gt $dt -and $_.Extension -like $extSearchBox.Text} | Select-Object Name, FullName, LastWriteTime, CreationTime, Extension, Directory
+    $result = gci -Path $textboxPath.Text -Filter "*$($textboxSearch.Text)*" -Recurse -Force -ea SilentlyContinue  | ? {$_.LastWriteTime -gt $dt -and $_.Extension -like $textboxExtension.Text} | Select-Object Name, FullName, LastWriteTime, CreationTime, Extension, Directory
     
     if ($result.Count -le 0){
         [System.Windows.Forms.MessageBox]::Show("No Results Found", "Message from $($MainForm.Text)")
@@ -97,17 +98,20 @@ $Search.add_click({
     }
 })
 
-### Add Controls ###
-$MainForm.Controls.Add($strSearchBox)
-$MainForm.Controls.Add($strText)
-$MainForm.Controls.Add($pathSearchBox)
-$MainForm.Controls.Add($extSearchBox)
+
+
+### Add Controls to mainform ###
+$MainForm.Controls.Add($textboxSearch)
+$MainForm.Controls.Add($textboxPath)
+$MainForm.Controls.Add($textboxExtension)
 $MainForm.Controls.Add($datePicker)
-$MainForm.Controls.Add($pathText)
-$MainForm.Controls.Add($extText)
-$MainForm.Controls.Add($dateText)
+$MainForm.Controls.Add($lblSearch)
+$MainForm.Controls.Add($lblPath)
+$MainForm.Controls.Add($lblExt)
+$MainForm.Controls.Add($lblDate)
 $MainForm.Controls.Add($dgv)
-$MainForm.Controls.Add($Search)
+$MainForm.Controls.Add($btnSearch)
+$MainForm.Controls.Add($pb)
 
 
 ### Activate Form ###
